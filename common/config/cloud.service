@@ -1,0 +1,14 @@
+[Unit]
+Description=Cloud Agent Service
+Wants=mysql.service
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=5
+WorkingDirectory=/var/lib/cloud/
+ExecStartPre=/bin/sleep 10
+ExecStart=/usr/bin/cloud-agent
+
+[Install]
+WantedBy=multi-user.target

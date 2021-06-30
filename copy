@@ -1,0 +1,4 @@
+#!/bin/bash
+
+scp ./cloud-agent yqliu@172.30.21.6:~
+
