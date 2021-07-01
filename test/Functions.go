@@ -1,0 +1,9 @@
+package test
+
+//User
+const (
+	LOGIN 		 = "LOGIN"
+	CHANGEPASSWD = "CHANGEPASSWD"
+	REGISTER     = "REGISTER"
+	CANCELLATION = "CANCELLATION"
+)

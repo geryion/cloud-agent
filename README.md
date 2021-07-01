@@ -8,6 +8,8 @@
 
 增加检测逻辑
 
+day1
+
 docker安装数据库mysql 5.7
 
 1）搭建docker环境
@@ -17,3 +19,11 @@ docker安装数据库mysql 5.7
 3）打包配置好的mysql容器为镜像
 
 4）测试部署mysql
+
+day2
+
+编写接口测试、单元测试
+
+使用systemd管理cloud-agent.service
+
+

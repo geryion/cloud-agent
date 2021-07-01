@@ -19,6 +19,19 @@ type Cloud interface {
   //  - User
   //  - Passwd
   Login(user string, passwd string) (r string, err error)
+  // Parameters:
+  //  - User
+  //  - Passwd
+  //  - Passwd2
+  Register(user string, passwd string, passwd2 string) (r string, err error)
+  // Parameters:
+  //  - User
+  //  - Passwd
+  CancelLation(user string, passwd string) (r string, err error)
+  // Parameters:
+  //  - User
+  //  - Passwd
+  ChangePasswd(user string, passwd string) (r string, err error)
 }
 
 type CloudClient struct {
@@ -125,10 +138,246 @@ func (p *CloudClient) recvLogin() (value string, err error) {
   return
 }
 
+// Parameters:
+//  - User
+//  - Passwd
+//  - Passwd2
+func (p *CloudClient) Register(user string, passwd string, passwd2 string) (r string, err error) {
+  if err = p.sendRegister(user, passwd, passwd2); err != nil { return }
+  return p.recvRegister()
+}
+
+func (p *CloudClient) sendRegister(user string, passwd string, passwd2 string)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("Register", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := CloudRegisterArgs{
+  User : user,
+  Passwd : passwd,
+  Passwd2 : passwd2,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *CloudClient) recvRegister() (value string, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "Register" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "Register failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "Register failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error2 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error3 error
+    error3, err = error2.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error3
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "Register failed: invalid message type")
+    return
+  }
+  result := CloudRegisterResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - User
+//  - Passwd
+func (p *CloudClient) CancelLation(user string, passwd string) (r string, err error) {
+  if err = p.sendCancelLation(user, passwd); err != nil { return }
+  return p.recvCancelLation()
+}
+
+func (p *CloudClient) sendCancelLation(user string, passwd string)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("CancelLation", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := CloudCancelLationArgs{
+  User : user,
+  Passwd : passwd,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *CloudClient) recvCancelLation() (value string, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "CancelLation" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "CancelLation failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "CancelLation failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error4 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error5 error
+    error5, err = error4.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error5
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "CancelLation failed: invalid message type")
+    return
+  }
+  result := CloudCancelLationResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
+// Parameters:
+//  - User
+//  - Passwd
+func (p *CloudClient) ChangePasswd(user string, passwd string) (r string, err error) {
+  if err = p.sendChangePasswd(user, passwd); err != nil { return }
+  return p.recvChangePasswd()
+}
+
+func (p *CloudClient) sendChangePasswd(user string, passwd string)(err error) {
+  oprot := p.OutputProtocol
+  if oprot == nil {
+    oprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.OutputProtocol = oprot
+  }
+  p.SeqId++
+  if err = oprot.WriteMessageBegin("ChangePasswd", thrift.CALL, p.SeqId); err != nil {
+      return
+  }
+  args := CloudChangePasswdArgs{
+  User : user,
+  Passwd : passwd,
+  }
+  if err = args.Write(oprot); err != nil {
+      return
+  }
+  if err = oprot.WriteMessageEnd(); err != nil {
+      return
+  }
+  return oprot.Flush()
+}
+
+
+func (p *CloudClient) recvChangePasswd() (value string, err error) {
+  iprot := p.InputProtocol
+  if iprot == nil {
+    iprot = p.ProtocolFactory.GetProtocol(p.Transport)
+    p.InputProtocol = iprot
+  }
+  method, mTypeId, seqId, err := iprot.ReadMessageBegin()
+  if err != nil {
+    return
+  }
+  if method != "ChangePasswd" {
+    err = thrift.NewTApplicationException(thrift.WRONG_METHOD_NAME, "ChangePasswd failed: wrong method name")
+    return
+  }
+  if p.SeqId != seqId {
+    err = thrift.NewTApplicationException(thrift.BAD_SEQUENCE_ID, "ChangePasswd failed: out of sequence response")
+    return
+  }
+  if mTypeId == thrift.EXCEPTION {
+    error6 := thrift.NewTApplicationException(thrift.UNKNOWN_APPLICATION_EXCEPTION, "Unknown Exception")
+    var error7 error
+    error7, err = error6.Read(iprot)
+    if err != nil {
+      return
+    }
+    if err = iprot.ReadMessageEnd(); err != nil {
+      return
+    }
+    err = error7
+    return
+  }
+  if mTypeId != thrift.REPLY {
+    err = thrift.NewTApplicationException(thrift.INVALID_MESSAGE_TYPE_EXCEPTION, "ChangePasswd failed: invalid message type")
+    return
+  }
+  result := CloudChangePasswdResult{}
+  if err = result.Read(iprot); err != nil {
+    return
+  }
+  if err = iprot.ReadMessageEnd(); err != nil {
+    return
+  }
+  value = result.GetSuccess()
+  return
+}
+
 
 type CloudProcessor struct {
   processorMap map[string]thrift.TProcessorFunction
-  handler      Cloud
+  handler Cloud
 }
 
 func (p *CloudProcessor) AddToProcessorMap(key string, processor thrift.TProcessorFunction) {
@@ -146,9 +395,12 @@ func (p *CloudProcessor) ProcessorMap() map[string]thrift.TProcessorFunction {
 
 func NewCloudProcessor(handler Cloud) *CloudProcessor {
 
-  self2 := &CloudProcessor{handler: handler, processorMap:make(map[string]thrift.TProcessorFunction)}
-  self2.processorMap["Login"] = &cloudProcessorLogin{handler: handler}
-return self2
+  self8 := &CloudProcessor{handler:handler, processorMap:make(map[string]thrift.TProcessorFunction)}
+  self8.processorMap["Login"] = &cloudProcessorLogin{handler:handler}
+  self8.processorMap["Register"] = &cloudProcessorRegister{handler:handler}
+  self8.processorMap["CancelLation"] = &cloudProcessorCancelLation{handler:handler}
+  self8.processorMap["ChangePasswd"] = &cloudProcessorChangePasswd{handler:handler}
+return self8
 }
 
 func (p *CloudProcessor) Process(iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -159,12 +411,12 @@ func (p *CloudProcessor) Process(iprot, oprot thrift.TProtocol) (success bool, e
   }
   iprot.Skip(thrift.STRUCT)
   iprot.ReadMessageEnd()
-  x3 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
+  x9 := thrift.NewTApplicationException(thrift.UNKNOWN_METHOD, "Unknown function " + name)
   oprot.WriteMessageBegin(name, thrift.EXCEPTION, seqId)
-  x3.Write(oprot)
+  x9.Write(oprot)
   oprot.WriteMessageEnd()
   oprot.Flush()
-  return false, x3
+  return false, x9
 
 }
 
@@ -199,6 +451,150 @@ var retval string
     result.Success = &retval
 }
   if err2 = oprot.WriteMessageBegin("Login", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type cloudProcessorRegister struct {
+  handler Cloud
+}
+
+func (p *cloudProcessorRegister) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := CloudRegisterArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("Register", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := CloudRegisterResult{}
+var retval string
+  var err2 error
+  if retval, err2 = p.handler.Register(args.User, args.Passwd, args.Passwd2); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing Register: " + err2.Error())
+    oprot.WriteMessageBegin("Register", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return true, err2
+  } else {
+    result.Success = &retval
+}
+  if err2 = oprot.WriteMessageBegin("Register", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type cloudProcessorCancelLation struct {
+  handler Cloud
+}
+
+func (p *cloudProcessorCancelLation) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := CloudCancelLationArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("CancelLation", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := CloudCancelLationResult{}
+var retval string
+  var err2 error
+  if retval, err2 = p.handler.CancelLation(args.User, args.Passwd); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing CancelLation: " + err2.Error())
+    oprot.WriteMessageBegin("CancelLation", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return true, err2
+  } else {
+    result.Success = &retval
+}
+  if err2 = oprot.WriteMessageBegin("CancelLation", thrift.REPLY, seqId); err2 != nil {
+    err = err2
+  }
+  if err2 = result.Write(oprot); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err2 = oprot.Flush(); err == nil && err2 != nil {
+    err = err2
+  }
+  if err != nil {
+    return
+  }
+  return true, err
+}
+
+type cloudProcessorChangePasswd struct {
+  handler Cloud
+}
+
+func (p *cloudProcessorChangePasswd) Process(seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+  args := CloudChangePasswdArgs{}
+  if err = args.Read(iprot); err != nil {
+    iprot.ReadMessageEnd()
+    x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+    oprot.WriteMessageBegin("ChangePasswd", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return false, err
+  }
+
+  iprot.ReadMessageEnd()
+  result := CloudChangePasswdResult{}
+var retval string
+  var err2 error
+  if retval, err2 = p.handler.ChangePasswd(args.User, args.Passwd); err2 != nil {
+    x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing ChangePasswd: " + err2.Error())
+    oprot.WriteMessageBegin("ChangePasswd", thrift.EXCEPTION, seqId)
+    x.Write(oprot)
+    oprot.WriteMessageEnd()
+    oprot.Flush()
+    return true, err2
+  } else {
+    result.Success = &retval
+}
+  if err2 = oprot.WriteMessageBegin("ChangePasswd", thrift.REPLY, seqId); err2 != nil {
     err = err2
   }
   if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -426,6 +822,663 @@ func (p *CloudLoginResult) String() string {
     return "<nil>"
   }
   return fmt.Sprintf("CloudLoginResult(%+v)", *p)
+}
+
+// Attributes:
+//  - User
+//  - Passwd
+//  - Passwd2
+type CloudRegisterArgs struct {
+  User string `thrift:"user,1" db:"user" json:"user"`
+  Passwd string `thrift:"passwd,2" db:"passwd" json:"passwd"`
+  Passwd2 string `thrift:"passwd2,3" db:"passwd2" json:"passwd2"`
+}
+
+func NewCloudRegisterArgs() *CloudRegisterArgs {
+  return &CloudRegisterArgs{}
+}
+
+
+func (p *CloudRegisterArgs) GetUser() string {
+  return p.User
+}
+
+func (p *CloudRegisterArgs) GetPasswd() string {
+  return p.Passwd
+}
+
+func (p *CloudRegisterArgs) GetPasswd2() string {
+  return p.Passwd2
+}
+func (p *CloudRegisterArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    case 3:
+      if err := p.ReadField3(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CloudRegisterArgs)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.User = v
+}
+  return nil
+}
+
+func (p *CloudRegisterArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Passwd = v
+}
+  return nil
+}
+
+func (p *CloudRegisterArgs)  ReadField3(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 3: ", err)
+} else {
+  p.Passwd2 = v
+}
+  return nil
+}
+
+func (p *CloudRegisterArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("Register_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+    if err := p.writeField3(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CloudRegisterArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("user", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:user: ", p), err) }
+  if err := oprot.WriteString(string(p.User)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.user (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:user: ", p), err) }
+  return err
+}
+
+func (p *CloudRegisterArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("passwd", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:passwd: ", p), err) }
+  if err := oprot.WriteString(string(p.Passwd)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.passwd (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:passwd: ", p), err) }
+  return err
+}
+
+func (p *CloudRegisterArgs) writeField3(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("passwd2", thrift.STRING, 3); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 3:passwd2: ", p), err) }
+  if err := oprot.WriteString(string(p.Passwd2)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.passwd2 (3) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 3:passwd2: ", p), err) }
+  return err
+}
+
+func (p *CloudRegisterArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("CloudRegisterArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type CloudRegisterResult struct {
+  Success *string `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewCloudRegisterResult() *CloudRegisterResult {
+  return &CloudRegisterResult{}
+}
+
+var CloudRegisterResult_Success_DEFAULT string
+func (p *CloudRegisterResult) GetSuccess() string {
+  if !p.IsSetSuccess() {
+    return CloudRegisterResult_Success_DEFAULT
+  }
+return *p.Success
+}
+func (p *CloudRegisterResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *CloudRegisterResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CloudRegisterResult)  ReadField0(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 0: ", err)
+} else {
+  p.Success = &v
+}
+  return nil
+}
+
+func (p *CloudRegisterResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("Register_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CloudRegisterResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := oprot.WriteString(string(*p.Success)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.success (0) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *CloudRegisterResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("CloudRegisterResult(%+v)", *p)
+}
+
+// Attributes:
+//  - User
+//  - Passwd
+type CloudCancelLationArgs struct {
+  User string `thrift:"user,1" db:"user" json:"user"`
+  Passwd string `thrift:"passwd,2" db:"passwd" json:"passwd"`
+}
+
+func NewCloudCancelLationArgs() *CloudCancelLationArgs {
+  return &CloudCancelLationArgs{}
+}
+
+
+func (p *CloudCancelLationArgs) GetUser() string {
+  return p.User
+}
+
+func (p *CloudCancelLationArgs) GetPasswd() string {
+  return p.Passwd
+}
+func (p *CloudCancelLationArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CloudCancelLationArgs)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.User = v
+}
+  return nil
+}
+
+func (p *CloudCancelLationArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Passwd = v
+}
+  return nil
+}
+
+func (p *CloudCancelLationArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("CancelLation_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CloudCancelLationArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("user", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:user: ", p), err) }
+  if err := oprot.WriteString(string(p.User)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.user (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:user: ", p), err) }
+  return err
+}
+
+func (p *CloudCancelLationArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("passwd", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:passwd: ", p), err) }
+  if err := oprot.WriteString(string(p.Passwd)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.passwd (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:passwd: ", p), err) }
+  return err
+}
+
+func (p *CloudCancelLationArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("CloudCancelLationArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type CloudCancelLationResult struct {
+  Success *string `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewCloudCancelLationResult() *CloudCancelLationResult {
+  return &CloudCancelLationResult{}
+}
+
+var CloudCancelLationResult_Success_DEFAULT string
+func (p *CloudCancelLationResult) GetSuccess() string {
+  if !p.IsSetSuccess() {
+    return CloudCancelLationResult_Success_DEFAULT
+  }
+return *p.Success
+}
+func (p *CloudCancelLationResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *CloudCancelLationResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CloudCancelLationResult)  ReadField0(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 0: ", err)
+} else {
+  p.Success = &v
+}
+  return nil
+}
+
+func (p *CloudCancelLationResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("CancelLation_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CloudCancelLationResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := oprot.WriteString(string(*p.Success)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.success (0) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *CloudCancelLationResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("CloudCancelLationResult(%+v)", *p)
+}
+
+// Attributes:
+//  - User
+//  - Passwd
+type CloudChangePasswdArgs struct {
+  User string `thrift:"user,1" db:"user" json:"user"`
+  Passwd string `thrift:"passwd,2" db:"passwd" json:"passwd"`
+}
+
+func NewCloudChangePasswdArgs() *CloudChangePasswdArgs {
+  return &CloudChangePasswdArgs{}
+}
+
+
+func (p *CloudChangePasswdArgs) GetUser() string {
+  return p.User
+}
+
+func (p *CloudChangePasswdArgs) GetPasswd() string {
+  return p.Passwd
+}
+func (p *CloudChangePasswdArgs) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 1:
+      if err := p.ReadField1(iprot); err != nil {
+        return err
+      }
+    case 2:
+      if err := p.ReadField2(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CloudChangePasswdArgs)  ReadField1(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 1: ", err)
+} else {
+  p.User = v
+}
+  return nil
+}
+
+func (p *CloudChangePasswdArgs)  ReadField2(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 2: ", err)
+} else {
+  p.Passwd = v
+}
+  return nil
+}
+
+func (p *CloudChangePasswdArgs) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("ChangePasswd_args"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField1(oprot); err != nil { return err }
+    if err := p.writeField2(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CloudChangePasswdArgs) writeField1(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("user", thrift.STRING, 1); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 1:user: ", p), err) }
+  if err := oprot.WriteString(string(p.User)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.user (1) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 1:user: ", p), err) }
+  return err
+}
+
+func (p *CloudChangePasswdArgs) writeField2(oprot thrift.TProtocol) (err error) {
+  if err := oprot.WriteFieldBegin("passwd", thrift.STRING, 2); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field begin error 2:passwd: ", p), err) }
+  if err := oprot.WriteString(string(p.Passwd)); err != nil {
+  return thrift.PrependError(fmt.Sprintf("%T.passwd (2) field write error: ", p), err) }
+  if err := oprot.WriteFieldEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write field end error 2:passwd: ", p), err) }
+  return err
+}
+
+func (p *CloudChangePasswdArgs) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("CloudChangePasswdArgs(%+v)", *p)
+}
+
+// Attributes:
+//  - Success
+type CloudChangePasswdResult struct {
+  Success *string `thrift:"success,0" db:"success" json:"success,omitempty"`
+}
+
+func NewCloudChangePasswdResult() *CloudChangePasswdResult {
+  return &CloudChangePasswdResult{}
+}
+
+var CloudChangePasswdResult_Success_DEFAULT string
+func (p *CloudChangePasswdResult) GetSuccess() string {
+  if !p.IsSetSuccess() {
+    return CloudChangePasswdResult_Success_DEFAULT
+  }
+return *p.Success
+}
+func (p *CloudChangePasswdResult) IsSetSuccess() bool {
+  return p.Success != nil
+}
+
+func (p *CloudChangePasswdResult) Read(iprot thrift.TProtocol) error {
+  if _, err := iprot.ReadStructBegin(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read error: ", p), err)
+  }
+
+
+  for {
+    _, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+    if err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T field %d read error: ", p, fieldId), err)
+    }
+    if fieldTypeId == thrift.STOP { break; }
+    switch fieldId {
+    case 0:
+      if err := p.ReadField0(iprot); err != nil {
+        return err
+      }
+    default:
+      if err := iprot.Skip(fieldTypeId); err != nil {
+        return err
+      }
+    }
+    if err := iprot.ReadFieldEnd(); err != nil {
+      return err
+    }
+  }
+  if err := iprot.ReadStructEnd(); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+  }
+  return nil
+}
+
+func (p *CloudChangePasswdResult)  ReadField0(iprot thrift.TProtocol) error {
+  if v, err := iprot.ReadString(); err != nil {
+  return thrift.PrependError("error reading field 0: ", err)
+} else {
+  p.Success = &v
+}
+  return nil
+}
+
+func (p *CloudChangePasswdResult) Write(oprot thrift.TProtocol) error {
+  if err := oprot.WriteStructBegin("ChangePasswd_result"); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err) }
+  if p != nil {
+    if err := p.writeField0(oprot); err != nil { return err }
+  }
+  if err := oprot.WriteFieldStop(); err != nil {
+    return thrift.PrependError("write field stop error: ", err) }
+  if err := oprot.WriteStructEnd(); err != nil {
+    return thrift.PrependError("write struct stop error: ", err) }
+  return nil
+}
+
+func (p *CloudChangePasswdResult) writeField0(oprot thrift.TProtocol) (err error) {
+  if p.IsSetSuccess() {
+    if err := oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field begin error 0:success: ", p), err) }
+    if err := oprot.WriteString(string(*p.Success)); err != nil {
+    return thrift.PrependError(fmt.Sprintf("%T.success (0) field write error: ", p), err) }
+    if err := oprot.WriteFieldEnd(); err != nil {
+      return thrift.PrependError(fmt.Sprintf("%T write field end error 0:success: ", p), err) }
+  }
+  return err
+}
+
+func (p *CloudChangePasswdResult) String() string {
+  if p == nil {
+    return "<nil>"
+  }
+  return fmt.Sprintf("CloudChangePasswdResult(%+v)", *p)
 }
 
 

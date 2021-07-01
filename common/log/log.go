@@ -17,7 +17,7 @@ func InitLog()  {
 }
 
 func initDir()  {
-	ferr := os.MkdirAll("~/cloud/", 0666)
+	ferr := os.MkdirAll("/var/cloud/", 0666)
 	if ferr != nil {
 		fmt.Errorf("Failed to create log path. Err: %v", ferr.Error())
 	}
@@ -26,12 +26,12 @@ func initDir()  {
 func initLog()  {
 	//初始化hook日志配置
 	hook := lumberjack.Logger{
-		Filename: LOGFILE,
-		MaxSize: MAXSIZE,
+		Filename  : LOGFILE,
+		MaxSize   : MAXSIZE,
 		MaxBackups: MAXBACKUPS,
-		MaxAge: MAXAGE,
-		Compress: true,
-		LocalTime: true,
+		MaxAge    : MAXAGE,
+		Compress  : true,
+		LocalTime : true,
 	}
 
 	var syncer zapcore.WriteSyncer

@@ -4,7 +4,7 @@
 package main
 
 import (
-	"flag"
+        "flag"
         "fmt"
         "math"
         "net"
@@ -22,6 +22,9 @@ func Usage() {
   flag.PrintDefaults()
   fmt.Fprintln(os.Stderr, "\nFunctions:")
   fmt.Fprintln(os.Stderr, "  string Login(string user, string passwd)")
+  fmt.Fprintln(os.Stderr, "  string Register(string user, string passwd, string passwd2)")
+  fmt.Fprintln(os.Stderr, "  string CancelLation(string user, string passwd)")
+  fmt.Fprintln(os.Stderr, "  string ChangePasswd(string user, string passwd)")
   fmt.Fprintln(os.Stderr)
   os.Exit(0)
 }
@@ -126,6 +129,44 @@ func main() {
     argvalue1 := flag.Arg(2)
     value1 := argvalue1
     fmt.Print(client.Login(value0, value1))
+    fmt.Print("\n")
+    break
+  case "Register":
+    if flag.NArg() - 1 != 3 {
+      fmt.Fprintln(os.Stderr, "Register requires 3 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    argvalue1 := flag.Arg(2)
+    value1 := argvalue1
+    argvalue2 := flag.Arg(3)
+    value2 := argvalue2
+    fmt.Print(client.Register(value0, value1, value2))
+    fmt.Print("\n")
+    break
+  case "CancelLation":
+    if flag.NArg() - 1 != 2 {
+      fmt.Fprintln(os.Stderr, "CancelLation requires 2 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    argvalue1 := flag.Arg(2)
+    value1 := argvalue1
+    fmt.Print(client.CancelLation(value0, value1))
+    fmt.Print("\n")
+    break
+  case "ChangePasswd":
+    if flag.NArg() - 1 != 2 {
+      fmt.Fprintln(os.Stderr, "ChangePasswd requires 2 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    argvalue1 := flag.Arg(2)
+    value1 := argvalue1
+    fmt.Print(client.ChangePasswd(value0, value1))
     fmt.Print("\n")
     break
   case "":

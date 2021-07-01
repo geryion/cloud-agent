@@ -5,20 +5,19 @@ import (
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"strconv"
 	"time"
 )
 
 var CloudDB *gorm.DB
 var DATABASE = "cloud"
-var ip = "0.0.0.0"
-var mysqlPort = "3306"
 
-func InitDB() error {
+func InitDB(vip string, mysqlport int) error {
 	//连接数据库
 	if CloudDB != nil {
 		return nil
 	}
-	dsn := "root:root@tcp(" + ip + ":" + mysqlPort + ")/" + DATABASE + "?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root:root@tcp(" + vip + ":" + strconv.Itoa(mysqlport) + ")/" + DATABASE + "?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return fmt.Errorf("Failed to connect database. Err: %v", err)
