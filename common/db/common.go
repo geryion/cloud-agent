@@ -15,11 +15,7 @@ func AddUserToDB(user *User) error {
 
 func DelUserFromDB(user string, passwd string) error {
 	var err error
-	usr := &User{
-		Count : user,
-		PassWd: passwd,
-	}
-	err = CloudDB.Where("count=? and pass_wd=?", user, passwd).Delete(usr).Error
+	err = CloudDB.Where("count=? AND pass_wd=?", user, passwd).Delete(&User{}).Error
 	return err
 }
 

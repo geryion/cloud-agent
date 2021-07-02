@@ -61,3 +61,8 @@ func (cc *CloudHandler) ChangePasswd(user string, passwd string) (string, error)
 	}
 	return ret.Ret2Json(retc)
 }
+
+func (cc *CloudHandler) ResetPasswd(Type string, info string, code string) (string, error) {
+	//todo select confirm and reset user's passwd
+	return "", nil
+}

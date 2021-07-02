@@ -25,6 +25,17 @@ func Usage() {
   fmt.Fprintln(os.Stderr, "  string Register(string user, string passwd, string passwd2)")
   fmt.Fprintln(os.Stderr, "  string CancelLation(string user, string passwd)")
   fmt.Fprintln(os.Stderr, "  string ChangePasswd(string user, string passwd)")
+  fmt.Fprintln(os.Stderr, "  string ResetPasswd(string type, string info, string code)")
+  fmt.Fprintln(os.Stderr, "  string GetMainPage(string user)")
+  fmt.Fprintln(os.Stderr, "  string GetUserinfo(string user)")
+  fmt.Fprintln(os.Stderr, "  string GetPersons(string user)")
+  fmt.Fprintln(os.Stderr, "  string GetUserConf(string user)")
+  fmt.Fprintln(os.Stderr, "  string GetControlPage(string user)")
+  fmt.Fprintln(os.Stderr, "  string GetVideo(string user)")
+  fmt.Fprintln(os.Stderr, "  string GetMusic(string user)")
+  fmt.Fprintln(os.Stderr, "  string GetForgetNote(string user)")
+  fmt.Fprintln(os.Stderr, "  string GetContactNote(string user)")
+  fmt.Fprintln(os.Stderr, "  string GetPictures(string user)")
   fmt.Fprintln(os.Stderr)
   os.Exit(0)
 }
@@ -167,6 +178,120 @@ func main() {
     argvalue1 := flag.Arg(2)
     value1 := argvalue1
     fmt.Print(client.ChangePasswd(value0, value1))
+    fmt.Print("\n")
+    break
+  case "ResetPasswd":
+    if flag.NArg() - 1 != 3 {
+      fmt.Fprintln(os.Stderr, "ResetPasswd requires 3 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    argvalue1 := flag.Arg(2)
+    value1 := argvalue1
+    argvalue2 := flag.Arg(3)
+    value2 := argvalue2
+    fmt.Print(client.ResetPasswd(value0, value1, value2))
+    fmt.Print("\n")
+    break
+  case "GetMainPage":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "GetMainPage requires 1 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    fmt.Print(client.GetMainPage(value0))
+    fmt.Print("\n")
+    break
+  case "GetUserinfo":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "GetUserinfo requires 1 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    fmt.Print(client.GetUserinfo(value0))
+    fmt.Print("\n")
+    break
+  case "GetPersons":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "GetPersons requires 1 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    fmt.Print(client.GetPersons(value0))
+    fmt.Print("\n")
+    break
+  case "GetUserConf":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "GetUserConf requires 1 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    fmt.Print(client.GetUserConf(value0))
+    fmt.Print("\n")
+    break
+  case "GetControlPage":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "GetControlPage requires 1 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    fmt.Print(client.GetControlPage(value0))
+    fmt.Print("\n")
+    break
+  case "GetVideo":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "GetVideo requires 1 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    fmt.Print(client.GetVideo(value0))
+    fmt.Print("\n")
+    break
+  case "GetMusic":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "GetMusic requires 1 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    fmt.Print(client.GetMusic(value0))
+    fmt.Print("\n")
+    break
+  case "GetForgetNote":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "GetForgetNote requires 1 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    fmt.Print(client.GetForgetNote(value0))
+    fmt.Print("\n")
+    break
+  case "GetContactNote":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "GetContactNote requires 1 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    fmt.Print(client.GetContactNote(value0))
+    fmt.Print("\n")
+    break
+  case "GetPictures":
+    if flag.NArg() - 1 != 1 {
+      fmt.Fprintln(os.Stderr, "GetPictures requires 1 args")
+      flag.Usage()
+    }
+    argvalue0 := flag.Arg(1)
+    value0 := argvalue0
+    fmt.Print(client.GetPictures(value0))
     fmt.Print("\n")
     break
   case "":

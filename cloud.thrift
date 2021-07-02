@@ -35,4 +35,54 @@ service Cloud{
     * confirCode: 验证码
     * */
     string ResetPasswd(1:string type, 2:string info, 3:string code)
+
+    /*
+    * 获取主页信息
+    * */
+    string GetMainPage(1:string user)
+
+    /*
+    * 获取用户信息
+    * */
+    string GetUserinfo(1:string user)
+
+    /*
+    * 获取好友列表
+    * */
+    string GetPersons(1:string user)
+
+    /*
+    * 获取用户配置
+    * */
+    string GetUserConf(1:string user)
+
+    /*
+    * 获取管理界面
+    * */
+    string GetControlPage(1:string user)
+
+    /*
+    * 获取保存的视频数据
+    * */
+    string GetVideo(1:string user)
+
+    /*
+    * 获取保存的音乐
+    * */
+    string GetMusic(1:string user)
+
+    /*
+    * 获取保存的备忘录
+    * */
+    string GetForgetNote(1:string user)
+
+    /*
+    * 获取保存的通讯录
+    * */
+    string GetContactNote(1:string user)
+
+    /*
+    * 获取保存的照片
+    * */
+    string GetPictures(1:string user)
 }
